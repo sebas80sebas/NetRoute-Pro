@@ -1,57 +1,57 @@
-# NetLab: Router Configuration & Routing
+# NetLab: Router Configuration and Routing Practice
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Network](https://img.shields.io/badge/Focus-Networking-blue.svg)](#)
+This repository contains the full documentation and command references for the Router Configuration practice. The focus of this project is on static routing, interface management, and network fault tolerance verification.
 
-A comprehensive documentation and lab repository focused on advanced computer network configurations, specifically routing protocols, interface management, and network troubleshooting.
+## Project Information
 
-## 🚀 Project Overview
+- **Authors:** Iván Sebastián Loor Weir, Álvaro González Fúnez
+- **Subject:** Computer Networking (Redes de Ordenadores)
+- **Note:** Routing was configured starting from R100 towards the other nodes.
 
-This repository contains practical implementations and configurations for complex network topologies. It covers the following key areas:
+## Documentation and Procedures
 
-- **Static Routing:** Configuration and verification of routes across multiple routers (R1-R4).
-- **Network Troubleshooting:** Usage of diagnostic tools like `ping`, `traceroute`, and `ip route`.
-- **Interface Management:** Detailed steps for managing virtual interfaces and handling network failovers.
-- **Verification:** Practical execution steps for validating network connectivity in multi-hop environments.
+### Milestone 2 (Hito 2)
 
-## 📁 Repository Structure
+#### Diagnostic Phase
 
-- `REDES DE ORDENADORES.docx`: Main documentation containing lab procedures, commands, and expected results.
-- `GEMINI.md`: Contextual documentation for AI-assisted development and analysis.
+For both host offices (hstOfi1 and hstOfi2), the following commands are used to verify the initial state:
 
-## 🛠️ Key Commands Used
+1. Display routing table: `ip route show`
+2. Display interface addresses: `ip address show`
 
-### Host Diagnostics
-```bash
-# Check routing tables
-ip route show
+For routers R1, R2, R3, and R4, the following commands are used:
 
-# Check interface addresses
-ip address show
+1. Show running configuration: `show running-config`
+2. Show IP routing table: `show ip route`
 
-# Verify connectivity
-ping -c3 <TARGET_IP>
-```
+#### Connectivity Verification
 
-### Router Management (Cisco-style)
-```bash
-# View running configuration
-show running-config
+Connectivity tests are performed from hstOfi1 using the following commands:
 
-# View routing table
-show ip route
-```
+- Ping hstOfi2: `ping -c3 <IP_ADDRESS_HST_OFI2>`
+- Ping R3 (eth0.1): `ping -c3 <IP_ADDRESS_R3_ETH0_1>`
+- Ping R4 (eth0.2): `ping -c3 <IP_ADDRESS_R4_ETH0_2>`
 
-## 📖 How to Use
+#### Fault Tolerance and Route Redundancy Tests
 
-1. **Review the Documentation:** Start with `REDES DE ORDENADORES.docx` to understand the topology and objectives.
-2. **Follow the Hitos:** The project is structured in milestones (Hitos) for incremental learning.
-3. **Simulate:** Use these configurations in network simulators like GNS3 or Cisco Packet Tracer to replicate the lab environment.
+**Test 1: Interface Failover (R1/R2)**
 
-## ✍️ Authors
+1. Set interfaces `eth0.3` of R1 and `eth0.2` of R2 to `shutdown` mode.
+2. Verify the path from hstOfi2 to hstOfi1 using:
+   `traceroute -n <IP_ADDRESS_HST_OFI1>`
 
-- **Iván Sebastián Loor Weir**
-- **Álvaro González Fúnez**
+**Test 2: Interface Failover (R1/R3)**
 
----
-*Developed for Computer Networking practices.*
+1. Restore interfaces `eth0.3` of R1 and `eth0.2` of R2 to normal mode.
+2. Set interfaces `eth0.2` of R1 and `eth0.3` of R3 to `shutdown` mode.
+3. Verify connectivity from hstOfi1 to R3 (eth0.1) using:
+   `traceroute -n <IP_ADDRESS_R3_ETH0_1>`
+4. Maintaining this configuration, verify the path from hstOfi2 to R4 (eth0.2) using:
+   `traceroute -n <IP_ADDRESS_R4_ETH0_2>`
+
+## Usage
+
+Diagnostic scripts and command references can be found in the `commands/` directory:
+
+- `commands/host_diag.sh`: Script for host-level diagnostics.
+- `commands/router_cmds.txt`: Reference for router-specific commands.

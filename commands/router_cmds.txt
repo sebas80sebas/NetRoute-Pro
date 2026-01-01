@@ -1,0 +1,7 @@
+# Router Configuration and Status Commands
+
+# View current configuration
+show running-config
+
+# View routing table
+show ip route
