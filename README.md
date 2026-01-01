@@ -26,11 +26,6 @@ The following diagram represents the logical connection between the hosts and ro
          -------------- [ hstOfi2 ] -----------
 ```
 
-## Authors
-
-- Iván Sebastián Loor Weir
-- Álvaro González Fúnez
-
 ## Documentation and Procedures
 
 ### Milestone 2: Configuration and Verification
@@ -74,4 +69,3 @@ To test path re-routing to R3 and R4:
     - `host_diag.sh`: Automated host diagnostic script.
     - `router_cmds.txt`: Reference for Cisco router commands.
 - `README.md`: Full project documentation and topology.
-- `GEMINI.md`: Project context for AI development environments.
