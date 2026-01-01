@@ -1,57 +1,77 @@
-# NetLab: Router Configuration and Routing Practice
+# NetRoute-Pro: Static Routing and Network Redundancy
 
-This repository contains the full documentation and command references for the Router Configuration practice. The focus of this project is on static routing, interface management, and network fault tolerance verification.
+A professional implementation of static routing and network redundancy protocols. This project documents the configuration and verification of a multi-router network designed for high availability and fault tolerance.
 
-## Project Information
+## Environment
 
-- **Authors:** Iván Sebastián Loor Weir, Álvaro González Fúnez
-- **Subject:** Computer Networking (Redes de Ordenadores)
-- **Note:** Routing was configured starting from R100 towards the other nodes.
+This project was developed using a specialized VirtualBox virtual machine image tailored for network laboratory simulations. This environment provides the necessary virtualization layer to simulate multiple routers (R1-R4) and host offices (hstOfi1-hstOfi2) within a controlled sandbox.
+
+## Project Topology
+
+The following diagram represents the logical connection between the hosts and routers within the lab environment:
+
+```text
+      [ hstOfi1 ]
+           |
+           |
+           |
+        [  R1  ] ------------------ [  R2  ]
+        /      \
+    (eth0.2) (eth0.3)           (eth0.2) (eth0.3)
+      /          \                /          \
+  [  R3  ] ------- \ ------------/-------- [  R4  ]
+      \             \           /             /
+    (eth0.1)         \         /           (eth0.2)
+        \             \       /               /
+         -------------- [ hstOfi2 ] -----------
+```
+
+## Authors
+
+- Iván Sebastián Loor Weir
+- Álvaro González Fúnez
 
 ## Documentation and Procedures
 
-### Milestone 2 (Hito 2)
+### Milestone 2: Configuration and Verification
 
 #### Diagnostic Phase
 
-For both host offices (hstOfi1 and hstOfi2), the following commands are used to verify the initial state:
+The initial state of the network is verified through standard Linux and Cisco-style diagnostic commands.
 
-1. Display routing table: `ip route show`
-2. Display interface addresses: `ip address show`
+**Host Offices (hstOfi1, hstOfi2):**
+- Routing table inspection: `ip route show`
+- Interface address verification: `ip address show`
 
-For routers R1, R2, R3, and R4, the following commands are used:
+**Routers (R1, R2, R3, R4):**
+- Configuration audit: `show running-config`
+- Routing table audit: `show ip route`
 
-1. Show running configuration: `show running-config`
-2. Show IP routing table: `show ip route`
+#### Connectivity Testing
 
-#### Connectivity Verification
+Standard verification from hstOfi1:
+- To hstOfi2: `ping -c3 <IP_ADDRESS_HST_OFI2>`
+- To R3 (eth0.1): `ping -c3 <IP_ADDRESS_R3_ETH0_1>`
+- To R4 (eth0.2): `ping -c3 <IP_ADDRESS_R4_ETH0_2>`
 
-Connectivity tests are performed from hstOfi1 using the following commands:
+### Fault Tolerance Scenarios
 
-- Ping hstOfi2: `ping -c3 <IP_ADDRESS_HST_OFI2>`
-- Ping R3 (eth0.1): `ping -c3 <IP_ADDRESS_R3_ETH0_1>`
-- Ping R4 (eth0.2): `ping -c3 <IP_ADDRESS_R4_ETH0_2>`
+#### Scenario A: Primary Link Failure (R1-R2)
+To test redundancy between hstOfi1 and hstOfi2:
+1. Deactivate `eth0.3` on R1 and `eth0.2` on R2.
+2. Execute path discovery from hstOfi2: `traceroute -n <IP_ADDRESS_HST_OFI1>`.
 
-#### Fault Tolerance and Route Redundancy Tests
+#### Scenario B: Secondary Link Failure (R1-R3)
+To test path re-routing to R3 and R4:
+1. Restore previous interfaces.
+2. Deactivate `eth0.2` on R1 and `eth0.3` on R3.
+3. Execute path discovery from hstOfi1 to R3: `traceroute -n <IP_ADDRESS_R3_ETH0_1>`.
+4. Execute path discovery from hstOfi2 to R4: `traceroute -n <IP_ADDRESS_R4_ETH0_2>`.
 
-**Test 1: Interface Failover (R1/R2)**
+## Project Structure
 
-1. Set interfaces `eth0.3` of R1 and `eth0.2` of R2 to `shutdown` mode.
-2. Verify the path from hstOfi2 to hstOfi1 using:
-   `traceroute -n <IP_ADDRESS_HST_OFI1>`
-
-**Test 2: Interface Failover (R1/R3)**
-
-1. Restore interfaces `eth0.3` of R1 and `eth0.2` of R2 to normal mode.
-2. Set interfaces `eth0.2` of R1 and `eth0.3` of R3 to `shutdown` mode.
-3. Verify connectivity from hstOfi1 to R3 (eth0.1) using:
-   `traceroute -n <IP_ADDRESS_R3_ETH0_1>`
-4. Maintaining this configuration, verify the path from hstOfi2 to R4 (eth0.2) using:
-   `traceroute -n <IP_ADDRESS_R4_ETH0_2>`
-
-## Usage
-
-Diagnostic scripts and command references can be found in the `commands/` directory:
-
-- `commands/host_diag.sh`: Script for host-level diagnostics.
-- `commands/router_cmds.txt`: Reference for router-specific commands.
+- `commands/`: Automated scripts and command reference files.
+    - `host_diag.sh`: Automated host diagnostic script.
+    - `router_cmds.txt`: Reference for Cisco router commands.
+- `README.md`: Full project documentation and topology.
+- `GEMINI.md`: Project context for AI development environments.
